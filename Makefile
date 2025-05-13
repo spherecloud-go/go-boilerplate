@@ -25,65 +25,65 @@ MIGRATE_CLI_INSTALLED := $(shell command -v migrate 2> /dev/null)
 
 # Default target
 help:
-@echo "Available commands:"
-@echo "  make run           - Run the application (loads .env automatically)"
-@echo "  make build         - Build the application binary"
-@echo "  make clean         - Clean build artifacts"
-@echo "  make test          - Run tests (implement your tests)"
-@echo "  make migrate-up    - Apply all up migrations (requires migrate CLI and DB_URL)"
-@echo "  make migrate-down  - Rollback the last migration (requires migrate CLI and DB_URL)"
-@echo "  make migrate-create NAME=<migration_name> - Create new migration files (requires migrate CLI)"
-@echo ""
-@echo "Note on migrations: "
-@echo "  The 'migrate' CLI (golang-migrate) needs to be installed."
-@echo "  Install: go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest"
-@echo "  Ensure $GOPATH/bin is in your PATH."
-@echo "  Migration commands use DB_URL. Ensure it's correctly set (e.g., from .env, or export variables)."
-@echo "  Example for sourcing .env (if it doesn't use 'export'): export $ && make migrate-up"
+	@echo "Available commands:"
+	@echo "  make run           - Run the application (loads .env automatically)"
+	@echo "  make build         - Build the application binary"
+	@echo "  make clean         - Clean build artifacts"
+	@echo "  make test          - Run tests (implement your tests)"
+	@echo "  make migrate-up    - Apply all up migrations (requires migrate CLI and DB_URL)"
+	@echo "  make migrate-down  - Rollback the last migration (requires migrate CLI and DB_URL)"
+	@echo "  make migrate-create NAME=<migration_name> - Create new migration files (requires migrate CLI)"
+	@echo ""
+	@echo "Note on migrations: "
+	@echo "  The 'migrate' CLI (golang-migrate) needs to be installed."
+	@echo "  Install: go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest"
+	@echo "  Ensure $GOPATH/bin is in your PATH."
+	@echo "  Migration commands use DB_URL. Ensure it's correctly set (e.g., from .env, or export variables)."
+	@echo "  Example for sourcing .env (if it doesn't use 'export'): export $ && make migrate-up"
 
 
 run:
-@echo "Running the application (Go app will load .env)..."
-@go run $(CMD_PATH)
+	@echo "Running the application (Go app will load .env)..."
+	@go run $(CMD_PATH)
 
 build:
-@echo "Building the application..."
-@go build -o $(BINARY_NAME) $(CMD_PATH)
-@echo "Build complete: $(BINARY_NAME)"
+	@echo "Building the application..."
+	@go build -o $(BINARY_NAME) $(CMD_PATH)
+	@echo "Build complete: $(BINARY_NAME)"
 
 clean:
-@echo "Cleaning build artifacts..."
-@if [ -f $(BINARY_NAME) ]; then rm $(BINARY_NAME); fi
-@go clean
+	@echo "Cleaning build artifacts..."
+	@if [ -f $(BINARY_NAME) ]; then rm $(BINARY_NAME); fi
+	@go clean
 
 test:
-@echo "Running tests (please implement tests)..."
-@go test ./... -v
+	@echo "Running tests (please implement tests)..."
+	@go test ./... -v
 
 # Database Migrations
 MIGRATIONS_PATH=migrations
 
 check_migrate_cli:
-ifndef MIGRATE_CLI_INSTALLED
-@echo "Error: 'migrate' CLI not found. Please install it:" >&2
-@echo "go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest" >&2
-@echo "And ensure $GOPATH/bin is in your PATH." >&2
-@exit 1
-endif
-@if [ -z "$(DB_URL)" ] || [ "$(DB_URL)" = "postgres://:@::/?sslmode=" ]; then 		echo "Error: DB_URL is not properly set for migrations." >&2 ;		echo "Please ensure your .env file is created from .env.example and filled," >&2 ;		echo "and either source it (e.g., 'export $') or set DB_URL environment variable." >&2 ;		exit 1; 	fi
+	ifndef MIGRATE_CLI_INSTALLED
+	@echo "Error: 'migrate' CLI not found. Please install it:" >&2
+	@echo "go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest" >&2
+	@echo "And ensure $GOPATH/bin is in your PATH." >&2
+	@exit 1
+	endif
+	@if [ -z "$(DB_URL)" ] || [ "$(DB_URL)" = "postgres://:@::/?sslmode=" ]; then 		echo "Error: DB_URL is not properly set for migrations." >&2 ;		echo "Please ensure your .env file is created from .env.example and filled," >&2 ;		echo "and either source it (e.g., 'export $') or set DB_URL environment variable." >&2 ;		exit 1; 	fi
 
 
 migrate-up: check_migrate_cli
-@echo "Applying migrations up using DB_URL: $(DB_URL)..."
-@migrate -database "$(DB_URL)" -path $(MIGRATIONS_PATH) up
+	@echo "Applying migrations up using DB_URL: $(DB_URL)..."
+	@migrate -database "$(DB_URL)" -path $(MIGRATIONS_PATH) up
 
 migrate-down: check_migrate_cli
-@echo "Rolling back last migration using DB_URL: $(DB_URL)..."
-@migrate -database "$(DB_URL)" -path $(MIGRATIONS_PATH) down 1
+	@echo "Rolling back last migration using DB_URL: $(DB_URL)..."
+	@migrate -database "$(DB_URL)" -path $(MIGRATIONS_PATH) down 1
 
 migrate-create: check_migrate_cli
-@if [ -z "$(NAME)" ]; then 		echo "Error: Migration NAME is not set. Usage: make migrate-create NAME=your_migration_name"; 		exit 1; 	fi
-@echo "Creating migration: $(NAME)..."
-@migrate create -ext sql -dir $(MIGRATIONS_PATH) -seq $(NAME)
-@echo "Migration files created for $(NAME). Edit them in $(MIGRATIONS_PATH)/"
+	@if [ -z "$(NAME)" ]; then 		echo "Error: Migration NAME is not set. Usage: make migrate-create NAME=your_migration_name"; 		exit 1; 	fi
+	@echo "Creating migration: $(NAME)..."
+	@migrate create -ext sql -dir $(MIGRATIONS_PATH) -seq $(NAME)
+	@echo "Migration files created for $(NAME). Edit them in $(MIGRATIONS_PATH)/"
 

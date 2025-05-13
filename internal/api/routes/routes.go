@@ -56,7 +56,7 @@ func SetupRouter(cfg *config.Config) *gin.Engine {
 
 	// --- Routes ---
 	router.GET("/health", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"status": "UP", "service": "testapi"})
+		c.JSON(http.StatusOK, gin.H{"status": "UP", "service": "go-boilerplate"})
 	})
 
 	authRoutes := router.Group("/auth")

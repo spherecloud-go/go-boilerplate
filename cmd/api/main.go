@@ -6,7 +6,7 @@ import (
 	"github.com/spherecloud-go/go-boilerplate/internal/api/routes"
 	"github.com/spherecloud-go/go-boilerplate/internal/auth"
 	"github.com/spherecloud-go/go-boilerplate/internal/config"
-	"github.com/spherecloud-go/go-boilerplate/internal/database"
+	// "github.com/spherecloud-go/go-boilerplate/internal/database"
 )
 
 // @title testapi API
@@ -36,9 +36,9 @@ func main() {
 
 	auth.InitializeJWT(cfg)
 
-	if err := database.Connect(cfg); err != nil {
-		log.Fatalf("Failed to connect to database: %v", err)
-	}
+	// if err := database.Connect(cfg); err != nil {
+	// 	log.Fatalf("Failed to connect to database: %v", err)
+	// }
 
 	// Optional: Run migrations on startup.
 	// For production, it's often better to run migrations as a separate step (e.g., 'make migrate-up').
