@@ -163,4 +163,5 @@ The generated `Makefile` includes several useful commands:
 ---
 
 **Note: This generator scripts doesnot format the code during initial setup, so you might have to manually format all the files yourself.**
+
 This generator provides a starting point. Feel free to modify and extend it to fit your specific project needs!
